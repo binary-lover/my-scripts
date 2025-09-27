@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Kali Linux weekly ISO URL
+DOWNLOAD_URL="https://cdimage.kali.org/kali-weekly/kali-linux-2025-W26-installer-amd64.iso"
+FILE_NAME="kali-linux-installer.iso"  # Local filename to use
+
+# Function to download the file
+download_file() {
+    echo "Starting download: $DOWNLOAD_URL"
+    start_time=$(date +%s)
+    
+    # Download the file using wget (with progress bar)
+    if wget -q --show-progress -O "$FILE_NAME" "$DOWNLOAD_URL"; then
+        end_time=$(date +%s)
+        download_time=$((end_time - start_time))
+        file_size=$(du -m "$FILE_NAME" | cut -f1)  # Size in MB
+        
+        # Calculate download speed (MB/s)
+        if [ "$download_time" -gt 0 ]; then
+            speed=$(echo "scale=2; $file_size / $download_time" | bc)
+        else
+            speed=0
+        fi
+        
+        echo "Download complete! Size: ${file_size}MB | Time: ${download_time}s | Speed: ${speed}MB/s"
+        return 0
+    else
+        echo "Download failed!"
+        return 1
+    fi
+}
+
+# Function to delete the file
+delete_file() {
+    if [ -f "$FILE_NAME" ]; then
+        rm -f "$FILE_NAME"
+        echo "Deleted file: $FILE_NAME"
+    fi
+}
+
+# Main loop
+while true; do
+    if download_file; then
+        delete_file
+    fi
+    
+    # Wait a moment before next download
+    sleep 1
+done

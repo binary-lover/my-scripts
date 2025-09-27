@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Function to shred a single file
+shred_file() {
+    local file="$1"
+    echo "Shredding file: $file"
+    shred -f -u -v -z "$file"
+    if [ $? -ne 0 ]; then
+        echo "Warning: Failed to shred '$file'"
+        return 1
+    fi
+    return 0
+}
+
+# Function to shred directory contents and then remove empty directories
+shred_directory() {
+    local target_dir="$1"
+    
+    # First shred all files recursively
+    find "$target_dir" -type f -print0 | while IFS= read -r -d $'\0' file; do
+        shred_file "$file"
+    done
+    
+    # Then remove all empty directories
+    find "$target_dir" -type d -empty -delete
+    if [ $? -eq 0 ]; then
+        echo "Successfully removed empty directories"
+    else
+        echo "Warning: Some directories could not be removed (may not be empty)"
+    fi
+}
+
+# Main script execution
+if [ $# -eq 0 ]; then
+    echo "Error: No file or directory specified."
+    echo "Usage: $0 /path/to/file_or_directory"
+    exit 1
+fi
+
+target="$1"
+
+# Verify target exists
+if [ ! -e "$target" ]; then
+    echo "Error: '$target' does not exist."
+    exit 1
+fi
+
+# Confirm with the user before proceeding
+if [ -f "$target" ]; then
+    read -p "WARNING: This will PERMANENTLY shred the file '$target'. Continue? (y/N) " -n 1 -r
+elif [ -d "$target" ]; then
+    read -p "WARNING: This will PERMANENTLY shred ALL files in '$target' and remove empty directories. Continue? (y/N) " -n 1 -r
+fi
+
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Operation cancelled."
+    exit 0
+fi
+
+# Determine if target is file or directory
+if [ -f "$target" ]; then
+    # Shred single file
+    shred_file "$target"
+elif [ -d "$target" ]; then
+    # Shred directory recursively and remove empty folders
+    shred_directory "$target"
+    echo "Finished secure deletion of '$target'"
+else
+    echo "Error: '$target' is neither a file nor a directory."
+    exit 1
+fi

@@ -1,0 +1,42 @@
+#!/bin/bash
+# A shortcut script to copy file content to clipboard
+
+# Function to show help message
+show_help() {
+  echo "Usage: clip <filename>"
+  echo
+  echo "A shortcut to copy the contents of a file to clipboard."
+  echo
+  echo "Options:"
+  echo "  -h        Show this help message."
+  echo
+  echo "Examples:"
+  echo "  clip file.txt  Copy the contents of 'file.txt' to the clipboard."
+}
+
+# Check if the user requested help
+if [ "$1" == "-h" ]; then
+  show_help
+  exit 0
+fi
+
+
+# Check if a file is provided as an argument
+if [ "$#" -ne 1 ]; then
+  echo "Usage: clip <filename>"
+  exit 1
+fi
+
+# Check if the file exists
+if [ ! -f "$1" ]; then
+  echo "File '$1' not found!"
+  exit 1
+fi
+
+# Copy the contents of the file to clipboard using xclip
+cat "$1" | xclip -selection clipboard
+
+# Check if the clipboard was updated successfully
+if [ $? -ne 0 ]; then
+  echo "[-] Error While copieng to clipboard..!"
+fi
