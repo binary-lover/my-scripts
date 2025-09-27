@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Get current directory full path
+current_dir="$PWD"
+# Get parent directory
+parent_dir="$(dirname "$current_dir")"
+# Get the folder name (basename)
+folder_name="$(basename "$current_dir")"
+# New folder name
+new_name="${folder_name}_COMPLETE"
+# Full new path
+new_path="${parent_dir}/${new_name}"
+
+# Rename the directory
+mv "$current_dir" "$new_path"
+
+echo "[+]  Renamed '$folder_name' to '$new_name'"
+echo " "
+
+# Move into the renamed directory
+cd "$new_path"
+exec $SHELL
+
