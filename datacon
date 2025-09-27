@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Kali Linux weekly ISO URL
-DOWNLOAD_URL="https://cdimage.kali.org/kali-weekly/kali-linux-2025-W26-installer-amd64.iso"
+DOWNLOAD_URL="https://cdimage.kali.org/kali-weekly/kali-linux-2025-W39-installer-purple-amd64.iso"
 FILE_NAME="kali-linux-installer.iso"  # Local filename to use
 
 # Function to download the file
