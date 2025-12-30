@@ -1,0 +1,40 @@
+#!/bin/bash
+
+clear
+
+# Colors
+RED='\033[1;31m'
+YELLOW='\033[1;33m'
+CYAN='\033[1;36m'
+MAGENTA='\033[1;35m'
+GREEN='\033[1;32m'
+RESET='\033[0m'
+
+echo -e "${YELLOW}"
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║                      ⚠  POWER OFF MENU  ⚠                    ║"
+echo "║                System shutdown confirmation                  ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo -e "${RESET}"
+
+# Confirmation input
+echo -en "${CYAN}Do you really want to shut down the system? ${GREEN}(Y/N): ${RESET}"
+read answer
+
+if [[ "$answer" =~ ^[Yy]$ ]]; then
+    echo -e "${CYAN}\nShutdown countdown starting...${RESET}"
+    
+    for i in {3..2}
+    do
+        echo -e "${MAGENTA}⏳ Shutting down in $i...${RESET}"
+        sleep 1
+    done
+
+    echo -e "${RED}\n⚡ SHUTTING DOWN NOW!${RESET}"
+    sleep 1
+    shutdown -h now
+
+else
+    echo -e "${GREEN}\nShutdown canceled. System running safely 🙂${RESET}"
+fi
+

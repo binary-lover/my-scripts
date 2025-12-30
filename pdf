@@ -1,0 +1,52 @@
+#!/bin/bash
+# A shortcut script to open a PDF file using the default viewer
+
+# Function to show help message
+show_help() {
+  echo "Usage: viewpdf <filename>"
+  echo
+  echo "A shortcut to open a PDF file using the system's default viewer."
+  echo
+  echo "Options:"
+  echo "  -h        Show this help message."
+  echo
+  echo "Examples:"
+  echo "  viewpdf report.pdf     Open 'report.pdf' in default PDF viewer."
+}
+
+# Check if help flag is passed
+if [ "$1" == "-h" ]; then
+  show_help
+  exit 0
+fi
+
+# Ensure exactly one argument is provided
+if [ "$#" -ne 1 ]; then
+  echo "Usage: viewpdf <filename>"
+  exit 1
+fi
+
+# Check if the file exists
+if [ ! -f "$1" ]; then
+  echo "File '$1' not found!"
+  exit 1
+fi
+
+# Check if it's a PDF
+if [[ "$1" != *.pdf ]]; then
+  echo "Error: '$1' is not a PDF file!"
+  exit 1
+fi
+
+# Open the PDF file
+xdg-open "$1" >/dev/null 2>&1 &
+
+# Verify if the command succeeded
+if [ $? -eq 0 ]; then
+  echo "[+] Opening '$1'..."
+else
+  echo "[-] Failed to open '$1'. Make sure xdg-open is installed."
+fi
+
+
+
